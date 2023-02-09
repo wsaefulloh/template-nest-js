@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import { Product } from 'src/modules/product/entities/product.entity';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Product } from 'src/modules/product/entities/product.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -29,8 +31,8 @@ export class Category {
   })
   updatedAt: string;
 
-  //   @OneToMany((type) => Product, (user) => user.role, {
-  //     onDelete: 'CASCADE',
-  //   })
-  //   users: User[];
+  @OneToMany((type) => Product, (product) => product.category, {
+    onDelete: 'CASCADE',
+  })
+  product: Product[];
 }
