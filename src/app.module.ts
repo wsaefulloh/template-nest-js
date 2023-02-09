@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       port: 5432,
@@ -15,6 +18,7 @@ import { AppService } from './app.service';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
