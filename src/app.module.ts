@@ -25,10 +25,10 @@ import { MulterModule } from '@nestjs/platform-express';
     ProductModule,
     UserModule,
     MulterModule.register({
-      dest: './files',
+      dest: './uploads',
     }),
   ],
-  // controllers: [AppController],
-  // providers: [AppService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

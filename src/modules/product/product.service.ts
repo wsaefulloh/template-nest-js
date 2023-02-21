@@ -10,7 +10,10 @@ export class ProductService {
     @InjectRepository(Product) private product: Repository<Product>,
   ) {}
 
-  public async create(input: CreateProductDto): Promise<any> {
+  public async create(
+    input: CreateProductDto,
+    image_product: string,
+  ): Promise<any> {
     try {
       const product = new Product();
       const dateString = new Date();
@@ -19,7 +22,7 @@ export class ProductService {
       product.id_category = input.id_category;
       product.price_product = input.price_product;
       product.description = input.description;
-      product.image_product = input.image_product;
+      product.image_product = image_product;
       product.createdAt = dateString.toISOString();
       product.updatedAt = dateString.toISOString();
       const data = await this.product.save(product);

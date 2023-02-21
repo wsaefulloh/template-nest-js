@@ -15,20 +15,20 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 // import { UpdateUserDto } from './dto/update-user.dto';
+import { multerOptions } from '../../helpers/multer';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('image_product'))
+  @UseInterceptors(FileInterceptor('image_product', multerOptions))
   public async create(
     @Body() request: CreateProductDto,
     @UploadedFile() image_product: Express.Multer.File,
   ): Promise<any> {
     try {
-      console.log(image_product);
-      return await this.productService.create(request);
+      return await this.productService.create(request, image_product.path);
     } catch (error) {
       return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -44,6 +44,7 @@ export class ProductController {
   }
 
   @Put(':id')
+  @UseInterceptors(FileInterceptor('image_product'))
   public async update(
     @Body() request: CreateProductDto,
     @Param('id') id: string,
