@@ -8,9 +8,12 @@ import {
   HttpException,
   HttpStatus,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 // import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('product')
@@ -18,8 +21,13 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  public async create(@Body() request: CreateProductDto): Promise<any> {
+  @UseInterceptors(FileInterceptor('image_product'))
+  public async create(
+    @Body() request: CreateProductDto,
+    @UploadedFile() image_product: Express.Multer.File,
+  ): Promise<any> {
     try {
+      console.log(image_product);
       return await this.productService.create(request);
     } catch (error) {
       return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);

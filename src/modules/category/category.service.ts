@@ -15,8 +15,8 @@ export class CategoryService {
       const category = new Category();
       const dateString = new Date();
       category.name_category = input.name_category;
-      category.createdAt = dateString.toString();
-      category.updatedAt = dateString.toString();
+      category.createdAt = dateString.toISOString();
+      category.updatedAt = dateString.toISOString();
       const data = await this.category.save(category);
       return new HttpException(data, HttpStatus.CREATED);
     } catch (error) {
@@ -42,7 +42,7 @@ export class CategoryService {
         {
           name_category: input.name_category,
           createdAt: data.createdAt,
-          updatedAt: dateString.toString(),
+          updatedAt: dateString.toISOString(),
         },
       );
       return new HttpException(`OK`, HttpStatus.OK);

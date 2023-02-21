@@ -20,8 +20,8 @@ export class ProductService {
       product.price_product = input.price_product;
       product.description = input.description;
       product.image_product = input.image_product;
-      product.createdAt = dateString.toString();
-      product.updatedAt = dateString.toString();
+      product.createdAt = dateString.toISOString();
+      product.updatedAt = dateString.toISOString();
       const data = await this.product.save(product);
       return new HttpException(data, HttpStatus.CREATED);
     } catch (error) {
@@ -52,7 +52,7 @@ export class ProductService {
           description: input.description,
           image_product: input.image_product,
           createdAt: data.createdAt,
-          updatedAt: dateString.toString(),
+          updatedAt: dateString.toISOString(),
         },
       );
       return new HttpException(`OK`, HttpStatus.OK);
