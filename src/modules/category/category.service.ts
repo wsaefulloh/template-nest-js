@@ -1,16 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { StandartResponse } from 'src/helpers/response';
+import { Response } from 'express';
 
 @Injectable()
 export class CategoryService {
+  private standartResponse: StandartResponse = new StandartResponse();
   constructor(
     @InjectRepository(Category) private category: Repository<Category>,
   ) {}
 
-  public async create(input: CreateCategoryDto): Promise<any> {
+  public async create(input: CreateCategoryDto, res: Response): Promise<any> {
     try {
       const category = new Category();
       const dateString = new Date();
@@ -18,22 +21,26 @@ export class CategoryService {
       category.createdAt = dateString.toISOString();
       category.updatedAt = dateString.toISOString();
       const data = await this.category.save(category);
-      return new HttpException(data, HttpStatus.CREATED);
+      this.standartResponse.response(res, 201, data);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
-  public async findAll(): Promise<any> {
+  public async findAll(res: Response): Promise<any> {
     try {
       const data = await this.category.find();
-      return new HttpException(data, HttpStatus.OK);
+      this.standartResponse.response(res, 200, data);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
-  public async update(input: CreateCategoryDto, id: any): Promise<any> {
+  public async update(
+    input: CreateCategoryDto,
+    id: any,
+    res: Response,
+  ): Promise<any> {
     try {
       const data = await this.category.findOne(id);
       const dateString = new Date();
@@ -45,18 +52,18 @@ export class CategoryService {
           updatedAt: dateString.toISOString(),
         },
       );
-      return new HttpException(`OK`, HttpStatus.OK);
+      this.standartResponse.response(res, 200, data);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
-  public async remove(id: number): Promise<any> {
+  public async remove(id: number, res: Response): Promise<any> {
     try {
-      await this.category.delete(id);
-      return new HttpException('OK', HttpStatus.OK);
+      const data = await this.category.delete(id);
+      this.standartResponse.response(res, 200, data);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 }

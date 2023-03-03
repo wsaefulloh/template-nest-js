@@ -5,33 +5,38 @@ import {
   Body,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
   Put,
+  Res,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { Response } from 'express';
+import { StandartResponse } from 'src/helpers/response';
 // import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('category')
 export class CategoryController {
+  private standartResponse: StandartResponse = new StandartResponse();
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  public async create(@Body() request: CreateCategoryDto): Promise<any> {
+  public async create(
+    @Body() request: CreateCategoryDto,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
-      return await this.categoryService.create(request);
+      return await this.categoryService.create(request, res);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
   @Get()
-  public async findAll(): Promise<any> {
+  public async findAll(@Res() res: Response): Promise<any> {
     try {
-      return await this.categoryService.findAll();
+      return await this.categoryService.findAll(res);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
@@ -39,20 +44,24 @@ export class CategoryController {
   public async update(
     @Body() request: CreateCategoryDto,
     @Param('id') id: string,
+    @Res() res: Response,
   ): Promise<any> {
     try {
-      return await this.categoryService.update(request, Number(id));
+      return await this.categoryService.update(request, Number(id), res);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
   @Delete(':id')
-  public async delete(@Param('id') id: string): Promise<any> {
+  public async delete(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
-      return await this.categoryService.remove(Number(id));
+      return await this.categoryService.remove(Number(id), res);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 }

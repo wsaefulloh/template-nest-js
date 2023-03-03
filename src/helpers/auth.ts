@@ -29,13 +29,33 @@ export class Token {
         username: username,
         password: password,
       };
-      const token = jwt.sign(payload, 'secret', {
+      const token = jwt.sign(payload, process.env.JWT_KEYS, {
         expiresIn: '2h',
       });
       const result = {
         token: token,
         message: 'token created, login success',
       };
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async verifyToken(token: string): Promise<any> {
+    try {
+      const result = jwt.verify(
+        token,
+        process.env.JWT_KEYS,
+        (err: any, decode: any) => {
+          if (err) {
+            throw err;
+          }
+          const username = decode.username;
+          const password = decode.password;
+          return { username, password };
+        },
+      );
       return result;
     } catch (error) {
       throw error;

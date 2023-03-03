@@ -1,40 +1,36 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  HttpException,
-  HttpStatus,
-  Put,
-  Get,
-  Query,
-} from '@nestjs/common';
+import { Controller, Post, Body, Put, Get, Query, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { StandartResponse } from 'src/helpers/response';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
+  private standartResponse: StandartResponse = new StandartResponse();
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  public async create(@Body() request: CreateUserDto): Promise<any> {
+  public async create(
+    @Body() request: CreateUserDto,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
-      return await this.userService.create(request);
+      return await this.userService.create(request, res);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
-  @Put(':id')
+  @Put()
   public async update(
-    @Body() request: CreateUserDto,
-    @Param('id') id: string,
+    @Body() request: UpdateUserDto,
+    @Res() res: Response,
   ): Promise<any> {
     try {
-      return await this.userService.update(request, Number(id));
+      return await this.userService.update(request, res);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 
@@ -42,11 +38,12 @@ export class UserController {
   public async login(
     @Query('username') username: string,
     @Query('password') password: string,
+    @Res() res: Response,
   ): Promise<any> {
     try {
-      return await this.userService.login(username, password);
+      return await this.userService.login(username, password, res);
     } catch (error) {
-      return new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.standartResponse.response(res, 500, error);
     }
   }
 }
